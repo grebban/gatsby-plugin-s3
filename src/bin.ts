@@ -288,9 +288,11 @@ export const deploy = async ({ yes, bucket, userAgent }: DeployArguments = {}) =
                         key = join(key, 'index.html');
                     }
                     key = createSafeS3Key(key);
-                    if (config.bucketPrefix) {
-                        key = withoutLeadingSlash(`${config.bucketPrefix}/${key}`);
-                    }
+
+                    // GREBBAN: This prefix is already added
+                    // if (config.bucketPrefix) {
+                    //    key = withoutLeadingSlash(`${config.bucketPrefix}/${key}`);
+                    // }
 
                     const tag = `"${createHash('md5')
                         .update(redirectLocation)
