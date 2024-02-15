@@ -39,21 +39,19 @@ const buildRedirect = (pluginOptions: S3PluginOptions, route: GatsbyRedirect): R
 
 // converts gatsby redirects + rewrites to S3 routing rules
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-websiteconfiguration-routingrules.html
-const getRules = (pluginOptions: S3PluginOptions, routes: GatsbyRedirect[]): RoutingRules =>
+const getRules = (pluginOptions: S3PluginOptions, routes: GatsbyRedirect[]): RoutingRules => {
     // GREBBAN: we use redirectInBrowser only for creating client side redirects in gatsby, not in S3
-    routes
-        .map(
-            route =>
-                !route.redirectInBrowser && {
-                    Condition: {
-                        ...buildCondition(route.fromPath),
-                    },
-                    Redirect: {
-                        ...buildRedirect(pluginOptions, route),
-                    },
-                }
-        )
-        .filter(route => route) as RoutingRules;
+    const filteredRoutes = routes.filter(route => !route.redirectInBrowser);
+
+    return filteredRoutes.map(route => ({
+        Condition: {
+            ...buildCondition(route.fromPath),
+        },
+        Redirect: {
+            ...buildRedirect(pluginOptions, route),
+        },
+    }));
+};
 
 let params: Params = {};
 
