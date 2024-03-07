@@ -92,8 +92,29 @@ export interface S3PluginOptions extends PluginOptions {
     // the static website hosting functionality.
     enableS3StaticWebsiteHosting?: boolean;
 
+    // Error Document for S3 Static Site hosting
+    errorDocument?: string;
+
     // Max number of files to upload in parallel.
     parallelLimit?: number;
+
+    // The maximum amount of retries to perform for a service request.
+    maxRetries?: number;
+
+    // The maximum time in milliseconds that the connection phase of the request
+    // should be allowed to take. This only limits the connection phase and has
+    // no impact once the socket has established a connection.
+    connectTimeout?: number;
+
+    // Sets the socket to timeout after the specified amount of milliseconds of inactivity on the socket.
+    timeout?: number;
+
+    // By default an exponential backoff is used for retryable failures
+    // Use this option to use a fixed retry delay instead of exponential for particularly flaky connections
+    fixedRetryDelay?: number;
+
+    // Whether or not the plugin should output verbose logs from S3 uploads
+    verbose?: boolean;
 }
 
 export const DEFAULT_OPTIONS: S3PluginOptions = {
@@ -109,6 +130,7 @@ export const DEFAULT_OPTIONS: S3PluginOptions = {
     removeNonexistentObjects: true,
     retainObjectsPatterns: [],
     enableS3StaticWebsiteHosting: true,
+    errorDocument: '404.html',
     parallelLimit: 20,
 
     // the typing requires this for some reason...
