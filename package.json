@@ -1,5 +1,5 @@
 {
-    "name": "gatsby-plugin-s3",
+    "name": "@grebban/gatsby-plugin-s3",
     "version": "0.4.1",
     "description": "Enables you to deploy your gatsby site to a S3 bucket.",
     "main": "index.js",
@@ -11,8 +11,7 @@
         "build": "tsc --project .",
         "typecheck": "tsc --project . --noEmit",
         "develop": "babel --extensions=\".ts\" --out-dir=. src/ -w",
-        "snyk-protect": "snyk protect",
-        "prepare": "npm run snyk-protect"
+        "snyk-protect": "snyk protect"
     },
     "repository": {
         "type": "git",
