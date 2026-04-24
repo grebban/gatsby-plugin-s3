@@ -39,8 +39,11 @@ const buildRedirect = (pluginOptions: S3PluginOptions, route: GatsbyRedirect): R
 
 // converts gatsby redirects + rewrites to S3 routing rules
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-websiteconfiguration-routingrules.html
-const getRules = (pluginOptions: S3PluginOptions, routes: GatsbyRedirect[]): RoutingRules =>
-    routes.map(route => ({
+const getRules = (pluginOptions: S3PluginOptions, routes: GatsbyRedirect[]): RoutingRules => {
+    // GREBBAN: we use redirectInBrowser only for creating client side redirects in gatsby, not in S3
+    const filteredRoutes = routes.filter(route => !route.redirectInBrowser);
+
+    return filteredRoutes.map(route => ({
         Condition: {
             ...buildCondition(route.fromPath),
         },
@@ -48,6 +51,7 @@ const getRules = (pluginOptions: S3PluginOptions, routes: GatsbyRedirect[]): Rou
             ...buildRedirect(pluginOptions, route),
         },
     }));
+};
 
 let params: Params = {};
 
@@ -134,11 +138,13 @@ export const onPostBuild: GatsbyNode['onPostBuild'] = ({ store }, userPluginOpti
 
     const temporaryRedirects = redirects
         .filter(redirect => redirect.fromPath !== '/')
-        .filter(redirect => !redirect.isPermanent);
+        .filter(redirect => !redirect.isPermanent)
+        .filter(redirect => !redirect.redirectInBrowser); // GREBBAN: we use this option only for creating client side redirects in gatsby, not in S3
 
     const permanentRedirects: GatsbyRedirect[] = redirects
         .filter(redirect => redirect.fromPath !== '/')
-        .filter(redirect => redirect.isPermanent);
+        .filter(redirect => redirect.isPermanent)
+        .filter(redirect => !redirect.redirectInBrowser); // GREBBAN: we use this option only for creating client side redirects in gatsby, not in S3
 
     if (pluginOptions.generateRoutingRules) {
         routingRules = [...getRules(pluginOptions, temporaryRedirects), ...getRules(pluginOptions, rewrites)];
